@@ -60,7 +60,7 @@ const Sidebar = ({ onLogout }) => {
           {!isCollapsed && (
             <div className="flex flex-col overflow-hidden">
               <h1 className="text-white font-bold text-lg tracking-tight">
-                LegalAd
+                Legal Care
               </h1>
             </div>
           )}
