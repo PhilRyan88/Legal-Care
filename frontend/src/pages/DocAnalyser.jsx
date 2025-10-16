@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import mammoth from "mammoth";
-import ReactMarkdown from "react-markdown"; // Add this import
-import "../styles/DocAnalyser.css";
+import ReactMarkdown from "react-markdown";
+import { FaFileUpload, FaFilePdf, FaFileWord, FaFileAlt, FaCheckCircle, FaSpinner } from "react-icons/fa";
 
 // Initialize the Google Generative AI
 const genAI = new GoogleGenerativeAI(`${process.env.REACT_APP_GEMINI_API_KEY}`);
@@ -171,81 +171,186 @@ const DocAnalyser = () => {
     }
   };
 
+  const getFileIcon = () => {
+    if (!file) return <FaFileUpload className="text-4xl" />;
+    
+    switch (file.type) {
+      case "application/pdf":
+        return <FaFilePdf className="text-4xl text-red-400" />;
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        return <FaFileWord className="text-4xl text-blue-400" />;
+      case "text/plain":
+        return <FaFileAlt className="text-4xl text-slate-400" />;
+      default:
+        return <FaFileUpload className="text-4xl" />;
+    }
+  };
+
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
-      <form onSubmit={handleSubmit} className="mb-6">
-        <div className="mb-4">
-          <label
-            htmlFor="document"
-            className="block text-2xl text-blue-600 font-bold mb-2"
-          >
-            Upload Document:
-          </label>
-          <input
-            type="file"
-            name="document"
-            id="document"
-            accept=".pdf,.docx,.txt"
-            onChange={handleFileChange}
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-sm text-gray-600 mt-1">
-            Supported formats: PDF, DOCX, TXT
+    <div className="min-h-full w-full py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <div className="inline-block mb-4">
+            <div className="flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-full px-6 py-2">
+              <FaFileAlt className="text-purple-400" />
+              <span className="text-purple-400 text-sm font-semibold">DOCUMENT ANALYSER</span>
+            </div>
+          </div>
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-pink-200 mb-4">
+            Analyze Your Documents
+          </h1>
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            Upload legal documents for AI-powered analysis and insights
           </p>
         </div>
-        <button
-          type="submit"
-          disabled={loading || !file}
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-300"
-        >
-          {loading ? "Analyzing..." : "Analyze Document"}
-        </button>
-      </form>
 
-      {error && (
-        <div className="text-red-500 mb-4 p-3 bg-red-50 rounded">{error}</div>
-      )}
-
-      {fileURL && (
-        <div className="grid grid-cols-1 gap-4">
-          <div className="border rounded p-4">
-            <h3 className="text-xl font-medium mb-3 text-blue-600">
-              Uploaded Document
-            </h3>
-            <iframe
-              src={fileURL}
-              className="w-full h-96 border"
-              title="Uploaded Document"
-            />
-          </div>
-
-          {/* {extractedText && (
-            <div className="border rounded p-4">
-              <h3 className="text-xl font-medium mb-3 text-blue-600">Extracted Text</h3>
-              <div className="prose max-w-none whitespace-pre-wrap">
-                {extractedText}
+        {/* Upload Form Section */}
+        <div className="backdrop-blur-xl bg-gradient-to-br from-slate-900/90 to-slate-800/90 border border-slate-700/50 rounded-3xl p-8 shadow-2xl mb-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* File Upload Area */}
+            <div>
+              <label className="block text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-200 mb-4">
+                Upload Document
+              </label>
+              
+              <div className="relative group">
+                <input
+                  type="file"
+                  name="document"
+                  id="document"
+                  accept=".pdf,.docx,.txt"
+                  onChange={handleFileChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
+                  file 
+                    ? 'border-green-500/50 bg-green-500/5' 
+                    : 'border-slate-700/50 bg-slate-800/30 group-hover:border-purple-500/50 group-hover:bg-purple-500/5'
+                }`}>
+                  <div className="flex flex-col items-center space-y-4">
+                    {getFileIcon()}
+                    <div>
+                      <p className="text-slate-300 text-lg font-medium mb-1">
+                        {file ? file.name : 'Click to upload or drag and drop'}
+                      </p>
+                      <p className="text-slate-500 text-sm">
+                        {file ? `${(file.size / 1024).toFixed(2)} KB` : 'PDF, DOCX, or TXT (Max 10MB)'}
+                      </p>
+                    </div>
+                    {file && (
+                      <div className="flex items-center space-x-2 text-green-400">
+                        <FaCheckCircle />
+                        <span className="text-sm font-medium">File uploaded successfully</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          )} */}
 
-          <div className="border rounded p-4">
-            <h3 className="text-xl font-medium mb-3 text-blue-600">
-              Analysis Results
-            </h3>
-            <div className="prose max-w-none">
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading || !file}
+              className="w-full group relative px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold rounded-xl shadow-lg shadow-purple-500/50 hover:shadow-xl hover:shadow-purple-500/60 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center space-x-2"
+            >
               {loading ? (
-                <div className="flex items-center justify-center h-32">
-                  <p>Analyzing document...</p>
-                </div>
-              ) : analysisResult ? (
-                <ReactMarkdown>{analysisResult}</ReactMarkdown> // Replace FormattedText with ReactMarkdown
+                <>
+                  <FaSpinner className="animate-spin text-xl" />
+                  <span>Analyzing Document...</span>
+                </>
               ) : (
-                "Analysis results will appear here after processing."
+                <>
+                  <FaFileAlt className="text-xl" />
+                  <span>Analyze Document</span>
+                </>
               )}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+            </button>
+          </form>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Results Section */}
+        {fileURL && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Document Preview */}
+            <div className="backdrop-blur-xl bg-gradient-to-br from-slate-900/90 to-slate-800/90 border border-slate-700/50 rounded-3xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200">
+                  Document Preview
+                </h3>
+                <div className="flex items-center space-x-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-full px-4 py-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  <span className="text-blue-400 text-xs font-semibold">UPLOADED</span>
+                </div>
+              </div>
+              <div className="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50">
+                <iframe
+                  src={fileURL}
+                  className="w-full h-96"
+                  title="Uploaded Document"
+                />
+              </div>
+            </div>
+
+            {/* Analysis Results */}
+            <div className="backdrop-blur-xl bg-gradient-to-br from-slate-900/90 to-slate-800/90 border border-slate-700/50 rounded-3xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-200">
+                  Analysis Results
+                </h3>
+                {analysisResult && (
+                  <div className="flex items-center space-x-2 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-full px-4 py-2">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span className="text-green-400 text-xs font-semibold">COMPLETE</span>
+                  </div>
+                )}
+              </div>
+              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 h-96 overflow-y-auto">
+                {loading ? (
+                  <div className="flex flex-col items-center justify-center h-full space-y-4">
+                    <FaSpinner className="text-4xl text-purple-400 animate-spin" />
+                    <p className="text-slate-400">Analyzing your document...</p>
+                    <div className="w-48 h-2 bg-slate-700/50 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 animate-pulse"></div>
+                    </div>
+                  </div>
+                ) : analysisResult ? (
+                  <div className="prose prose-invert prose-slate max-w-none">
+                    <ReactMarkdown 
+                      components={{
+                        h1: ({node, ...props}) => <h1 className="text-white text-2xl font-bold mb-4" {...props} />,
+                        h2: ({node, ...props}) => <h2 className="text-purple-200 text-xl font-bold mb-3 mt-6" {...props} />,
+                        h3: ({node, ...props}) => <h3 className="text-purple-300 text-lg font-semibold mb-2 mt-4" {...props} />,
+                        p: ({node, ...props}) => <p className="text-slate-300 mb-3 leading-relaxed" {...props} />,
+                        ul: ({node, ...props}) => <ul className="text-slate-300 space-y-2 mb-4" {...props} />,
+                        ol: ({node, ...props}) => <ol className="text-slate-300 space-y-2 mb-4" {...props} />,
+                        li: ({node, ...props}) => <li className="ml-4" {...props} />,
+                        strong: ({node, ...props}) => <strong className="text-white font-semibold" {...props} />,
+                      }}
+                    >
+                      {analysisResult}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                    <div className="text-6xl text-slate-700">📄</div>
+                    <p className="text-slate-400">Upload and analyze a document to see results here</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
