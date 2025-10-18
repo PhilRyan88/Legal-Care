@@ -4,7 +4,7 @@ const MarriageDetails = ({ formData, handleChange }) => (
   <div className="space-y-4 w-full">
     <h2 className="text-blue-600 text-xl font-medium mb-4">5. Marriage Details</h2>
     <div>
-      <label className="block text-sm font-medium text-gray-700">Marriage Date</label>
+      <label className="block text-sm font-medium text-white">Marriage Date</label>
       <input
         type="date"
         name="marriageDate"
@@ -15,7 +15,7 @@ const MarriageDetails = ({ formData, handleChange }) => (
         max={new Date().toISOString().split("T")[0]}
       />
 
-    <label className="block text-sm font-medium text-gray-700">Marriage Location</label>
+    <label className="block text-sm font-medium text-white">Marriage Location</label>
       <input
         type="text"
         name="marriageLocation"
@@ -24,7 +24,7 @@ const MarriageDetails = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Marriage Rites/Customs</label>
+      <label className="block text-sm font-medium text-white">Marriage Rites/Customs</label>
       <input
         type="text"
         name="marriageRites"
@@ -35,7 +35,7 @@ const MarriageDetails = ({ formData, handleChange }) => (
         required
       />
 
-      <label className="block text-sm font-medium text-gray-700">Marriage Registration Details</label>
+      <label className="block text-sm font-medium text-white">Marriage Registration Details</label>
       <textarea
         name="marriageRegistrationDetails"
         value={formData.marriageRegistrationDetails}

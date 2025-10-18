@@ -4,7 +4,7 @@ const FinancialAndProperty = ({ formData, handleChange }) => (
   <div className="space-y-4 w-full">
     <h2 className="text-blue-600 text-xl font-medium mb-4">7. Financial and Property Details</h2>
     <div>
-      <label className="block text-sm font-medium text-gray-700">Spousal Support Details</label>
+      <label className="block text-sm font-medium text-white">Spousal Support Details</label>
       <textarea
         name="spousalSupportDetails"
         value={formData.spousalSupportDetails}
@@ -16,7 +16,7 @@ const FinancialAndProperty = ({ formData, handleChange }) => (
       ></textarea>
     </div>
     <div>
-      <label className="block text-sm font-medium text-gray-700">Property Division</label>
+      <label className="block text-sm font-medium text-white">Property Division</label>
       <textarea
         name="propertyDivision"
         value={formData.propertyDivision}
@@ -28,7 +28,7 @@ const FinancialAndProperty = ({ formData, handleChange }) => (
       ></textarea>
     </div>
     <div>
-      <label className="block text-sm font-medium text-gray-700">Exchange of Articles</label>
+      <label className="block text-sm font-medium text-white">Exchange of Articles</label>
       <textarea
         name="exchangeOfArticles"
         value={formData.exchangeOfArticles}
