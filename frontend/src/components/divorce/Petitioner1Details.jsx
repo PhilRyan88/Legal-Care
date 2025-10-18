@@ -4,7 +4,7 @@ const Petitioner1Details = ({ formData, handleChange }) => (
   <div className="space-y-4 w-full">
     <h2 className="text-blue-600 text-xl font-medium mb-4">2. Personal Details of Petitioner 1 (Husband)</h2>
     <div>
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Name</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Name</label>
       <input
         type="text"
         name="petitioner1Name"
@@ -13,7 +13,7 @@ const Petitioner1Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Age</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Age</label>
       <input
         type="number"
         name="petitioner1Age"
@@ -22,7 +22,7 @@ const Petitioner1Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Occupation</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Occupation</label>
       <input
         type="text"
         name="petitioner1Occupation"
@@ -31,7 +31,7 @@ const Petitioner1Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Address</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Address</label>
       <input
         type="text"
         name="petitioner1Address"
@@ -40,7 +40,7 @@ const Petitioner1Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Mobile No</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Mobile No</label>
       <input
         type="number"
         name="petitioner1MobileNo"
@@ -51,16 +51,16 @@ const Petitioner1Details = ({ formData, handleChange }) => (
         minLength={8}
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Address</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Address</label>
       <input
-        type="email"
+        type="text"
         name="petitioner1EmailID"
         value={formData.petitioner1Address}
         onChange={handleChange}
         className="border p-2 rounded mb-4 w-full"
-        required
+        
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Pre-marital Status</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Pre-marital Status</label>
       <input
         type="text"
         name="petitioner1PreMaritalStatus"
@@ -70,7 +70,7 @@ const Petitioner1Details = ({ formData, handleChange }) => (
         placeholder="Single/Married/Divorced/Widowed"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Religion</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Religion</label>
       <input
         type="text"
         name="petitioner1Religion"
@@ -79,14 +79,14 @@ const Petitioner1Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 1 Permanent Residence</label>
+      <label className="block text-sm font-medium text-white">Petitioner 1 Permanent Residence</label>
       <input
         type="text"
         name="petitioner1PermanentResidence"
         value={formData.petitioner1PermanentResidence}
         onChange={handleChange}
         className="border p-2 rounded mb-4 w-full"
-        required
+     
       />
     </div>
   </div>

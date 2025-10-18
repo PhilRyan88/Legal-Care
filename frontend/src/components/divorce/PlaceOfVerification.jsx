@@ -29,7 +29,7 @@ const PlaceOfVerification = ({ formData, handleChange }) => {
     <div className="space-y-4 w-full">
       <h2 className="text-blue-600 text-xl font-medium mb-4">1. Place of Verification</h2>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Select a family court</label>
+        <label className="block text-sm font-medium text-white">Select a family court</label>
         <select
           name="verificationPlace"
           value={formData.verificationPlace || ""}

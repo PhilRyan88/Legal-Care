@@ -2,9 +2,13 @@ import React from "react";
 
 const Petitioner2Details = ({ formData, handleChange }) => (
   <div className="space-y-4 w-full">
-    <h2 className="text-blue-600 text-xl font-medium mb-4">3. Personal Details of Petitioner 2 (Wife)</h2>
+    <h2 className="text-blue-600 text-xl font-medium mb-4">
+      3. Personal Details of Petitioner 2 (Wife)
+    </h2>
     <div>
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Name</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Name
+      </label>
       <input
         type="text"
         name="petitioner2Name"
@@ -13,7 +17,9 @@ const Petitioner2Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Maiden Name</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Maiden Name
+      </label>
       <input
         type="text"
         name="petitioner2MaidenName"
@@ -22,7 +28,9 @@ const Petitioner2Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Age</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Age
+      </label>
       <input
         type="number"
         name="petitioner2Age"
@@ -31,7 +39,9 @@ const Petitioner2Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Occupation</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Occupation
+      </label>
       <input
         type="text"
         name="petitioner2Occupation"
@@ -40,16 +50,19 @@ const Petitioner2Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Address</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Address
+      </label>
       <input
         type="text"
         name="petitioner2Address"
         value={formData.petitioner2Address}
         onChange={handleChange}
         className="border p-2 rounded mb-4 w-full"
-        required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Mobile No</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Mobile No
+      </label>
       <input
         type="number"
         name="petitioner2MobileNo"
@@ -60,16 +73,19 @@ const Petitioner2Details = ({ formData, handleChange }) => (
         minLength={8}
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Address</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Address
+      </label>
       <input
-        type="email"
+        type="text"
         name="petitioner2EmailID"
         value={formData.petitioner2Address}
         onChange={handleChange}
         className="border p-2 rounded mb-4 w-full"
-        required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Pre-marital Status</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Pre-marital Status
+      </label>
       <input
         type="text"
         name="petitioner2PreMaritalStatus"
@@ -79,7 +95,9 @@ const Petitioner2Details = ({ formData, handleChange }) => (
         placeholder="Single/Married/Divorced/Widowed"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Religion</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Religion
+      </label>
       <input
         type="text"
         name="petitioner2Religion"
@@ -88,7 +106,9 @@ const Petitioner2Details = ({ formData, handleChange }) => (
         className="border p-2 rounded mb-4 w-full"
         required
       />
-      <label className="block text-sm font-medium text-gray-700">Petitioner 2 Permanent Residence</label>
+      <label className="block text-sm font-medium text-white">
+        Petitioner 2 Permanent Residence
+      </label>
       <input
         type="text"
         name="petitioner2PermanentResidence"

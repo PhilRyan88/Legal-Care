@@ -5,7 +5,7 @@ const Advocates = ({formData,handleChange}) => {
     <div className='space-y-4 w-full'>
         <h2 className="text-blue-600 text-xl font-medium mb-4">10. Advocates Details</h2>
         <div>
-        <label className="block text-sm font-medium text-gray-700">Advocate1 Name</label>
+        <label className="block text-sm font-medium text-white">Advocate1 Name</label>
         <input
             type="text"
             name="advocate1Name"
@@ -14,7 +14,7 @@ const Advocates = ({formData,handleChange}) => {
             className="border p-2 rounded mb-4 w-full"
             required
         />
-        <label className="block text-sm font-medium text-gray-700">Advocate2 Name</label>
+        <label className="block text-sm font-medium text-white">Advocate2 Name</label>
         <input
             type="text"
             name="advocate2Name"
