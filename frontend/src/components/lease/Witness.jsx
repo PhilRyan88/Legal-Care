@@ -7,9 +7,9 @@ const Witness = ({ formData, handleChange }) => {
 
       {/* Witness 1 */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-800">First Witness</h3>
+        <h3 className="text-lg font-medium text-white">First Witness</h3>
         <div>
-          <label htmlFor="witnessName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="witnessName" className="block text-sm font-medium text-white">
             Witness Name
           </label>
           <input
@@ -24,7 +24,7 @@ const Witness = ({ formData, handleChange }) => {
           />
         </div>
         <div>
-          <label htmlFor="witnessAddress" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="witnessAddress" className="block text-sm font-medium text-white">
             Witness Address
           </label>
           <textarea
@@ -42,9 +42,9 @@ const Witness = ({ formData, handleChange }) => {
 
       {/* Witness 2 */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-800">Second Witness</h3>
+        <h3 className="text-lg font-medium text-white">Second Witness</h3>
         <div>
-          <label htmlFor="addWitnessName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="addWitnessName" className="block text-sm font-medium text-white">
             Additional Witness Name
           </label>
           <input
@@ -59,7 +59,7 @@ const Witness = ({ formData, handleChange }) => {
           />
         </div>
         <div>
-          <label htmlFor="addWitnessAddress" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="addWitnessAddress" className="block text-sm font-medium text-white">
             Additional Witness Address
           </label>
           <textarea
