@@ -4,7 +4,7 @@ const PropertyDetails = ({ formData, handleChange }) => (
   <div className="space-y-4">
     <h2 className="text-blue-600 text-xl font-medium mb-4">1. Property Details</h2>
     <div>
-      <label htmlFor="propertyAddress" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="propertyAddress" className="block text-sm font-medium text-white">
         Property Address
       </label>
       <textarea
@@ -19,7 +19,7 @@ const PropertyDetails = ({ formData, handleChange }) => (
       />
     </div>
     <div>
-      <label htmlFor="propertyType" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="propertyType" className="block text-sm font-medium text-white">
         Type of Property
       </label>
       <select

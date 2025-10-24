@@ -4,7 +4,7 @@ const LeaseDetails = ({ formData, handleChange }) => (
   <div className="space-y-4">
     <h2 className="text-blue-600 text-xl font-medium mb-4">2. Lease Details</h2>
     <div>
-      <label htmlFor="leaseStartDate" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="leaseStartDate" className="block text-sm font-medium text-white">
         Lease Start Date
       </label>
       <input
@@ -18,7 +18,7 @@ const LeaseDetails = ({ formData, handleChange }) => (
       />
     </div>
     <div>
-      <label htmlFor="leaseEndDate" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="leaseEndDate" className="block text-sm font-medium text-white">
         Lease End Date
       </label>
       <input
@@ -32,7 +32,7 @@ const LeaseDetails = ({ formData, handleChange }) => (
       />
     </div>
     <div>
-      <label htmlFor="monthlyRent" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="monthlyRent" className="block text-sm font-medium text-white">
         Monthly Rent (INR)
       </label>
       <input
@@ -49,7 +49,7 @@ const LeaseDetails = ({ formData, handleChange }) => (
       />
     </div>
     <div>
-      <label htmlFor="rentDueDay" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="rentDueDay" className="block text-sm font-medium text-white">
         Rent Due Day (Day of Month)
       </label>
       <input
@@ -66,7 +66,7 @@ const LeaseDetails = ({ formData, handleChange }) => (
       />
     </div>
     <div>
-      <label htmlFor="lateFeeGracePeriod" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="lateFeeGracePeriod" className="block text-sm font-medium text-white">
         Late Fee Grace Period (Days)
       </label>
       <input
@@ -81,7 +81,7 @@ const LeaseDetails = ({ formData, handleChange }) => (
       />
     </div>
     <div>
-      <label htmlFor="lateFeeAmount" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="lateFeeAmount" className="block text-sm font-medium text-white">
         Late Fee Amount (INR)
       </label>
       <input
@@ -97,7 +97,7 @@ const LeaseDetails = ({ formData, handleChange }) => (
       />
     </div>
     <div>
-      <label htmlFor="additionalDailyLateFee" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="additionalDailyLateFee" className="block text-sm font-medium text-white">
         Additional Daily Late Fee (INR)
       </label>
       <input
@@ -113,7 +113,7 @@ const LeaseDetails = ({ formData, handleChange }) => (
       />
     </div>
     <div>
-      <label htmlFor="securityDepositAmount" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="securityDepositAmount" className="block text-sm font-medium text-white">
         Security Deposit Amount (INR)
       </label>
       <input

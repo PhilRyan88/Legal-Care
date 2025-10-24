@@ -6,9 +6,9 @@ const PartiesDetails = ({ formData, handleChange }) => (
     
     {/* Landlord Details */}
     <div className="space-y-4">
-      <h3 className="text-lg font-medium text-gray-800">Landlord</h3>
+      <h3 className="text-lg font-medium text-white">Landlord</h3>
       <div>
-        <label htmlFor="landlordName" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="landlordName" className="block text-sm font-medium text-white">
           Landlord's Name
         </label>
         <input
@@ -23,7 +23,7 @@ const PartiesDetails = ({ formData, handleChange }) => (
         />
       </div>
       <div>
-        <label htmlFor="landlordAddress" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="landlordAddress" className="block text-sm font-medium text-white">
           Landlord's Address
         </label>
         <textarea
@@ -38,7 +38,7 @@ const PartiesDetails = ({ formData, handleChange }) => (
         />
       </div>
       <div>
-        <label htmlFor="landlordSignature" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="landlordSignature" className="block text-sm font-medium text-white">
           Landlord's Signature
         </label>
         <input
@@ -56,9 +56,9 @@ const PartiesDetails = ({ formData, handleChange }) => (
 
     {/* Tenant Details */}
     <div className="space-y-4">
-      <h3 className="text-lg font-medium text-gray-800">Tenant</h3>
+      <h3 className="text-lg font-medium text-white">Tenant</h3>
       <div>
-        <label htmlFor="tenantName" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="tenantName" className="block text-sm font-medium text-white">
           Tenant's Name
         </label>
         <input
@@ -73,7 +73,7 @@ const PartiesDetails = ({ formData, handleChange }) => (
         />
       </div>
       <div>
-        <label htmlFor="tenantAddress" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="tenantAddress" className="block text-sm font-medium text-white">
           Tenant's Address
         </label>
         <textarea
@@ -88,7 +88,7 @@ const PartiesDetails = ({ formData, handleChange }) => (
         />
       </div>
       <div>
-        <label htmlFor="tenantSignature" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="tenantSignature" className="block text-sm font-medium text-white">
           Tenant's Signature
         </label>
         <input

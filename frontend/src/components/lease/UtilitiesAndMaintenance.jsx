@@ -18,12 +18,12 @@ const UtilitiesAndMaintenance = ({ formData, handleChange, handleUtilitiesChange
 
       {/* Landlord Utilities Responsibility */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Landlord's Utilities Responsibility
         </label>
         <div className="space-y-2">
           {utilityOptions.map((utility) => (
-            <label key={utility} className="flex items-center">
+            <label key={utility} className="flex items-center text-white">
               <input
                 type="checkbox"
                 name="landlordUtilitiesResponsibility"
@@ -40,12 +40,12 @@ const UtilitiesAndMaintenance = ({ formData, handleChange, handleUtilitiesChange
 
       {/* Tenant Utilities Responsibility */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           Tenant's Utilities Responsibility
         </label>
         <div className="space-y-2">
           {utilityOptions.map((utility) => (
-            <label key={utility} className="flex items-center">
+            <label key={utility} className="flex items-center text-white">
               <input
                 type="checkbox"
                 name="tenantUtilitiesResponsibility"
@@ -62,7 +62,7 @@ const UtilitiesAndMaintenance = ({ formData, handleChange, handleUtilitiesChange
 
       {/* Maintenance Responsibility */}
       <div>
-        <label htmlFor="maintenanceResponsibility" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="maintenanceResponsibility" className="block text-sm font-medium text-white">
           Maintenance Responsibility
         </label>
         <textarea
@@ -78,9 +78,9 @@ const UtilitiesAndMaintenance = ({ formData, handleChange, handleUtilitiesChange
 
       {/* Pet Policy */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Are Pets Allowed?</label>
+        <label className="block text-sm font-medium text-white">Are Pets Allowed?</label>
         <div className="flex items-center space-x-4">
-          <label className="flex items-center">
+          <label className="flex items-center text-white">
             <input
               type="radio"
               name="arePetsAllowed"
@@ -91,7 +91,7 @@ const UtilitiesAndMaintenance = ({ formData, handleChange, handleUtilitiesChange
             />
             Yes
           </label>
-          <label className="flex items-center">
+          <label className="flex items-center text-white">
             <input
               type="radio"
               name="arePetsAllowed"
@@ -105,7 +105,7 @@ const UtilitiesAndMaintenance = ({ formData, handleChange, handleUtilitiesChange
         </div>
         {formData.arePetsAllowed && (
           <div>
-            <label htmlFor="petRestrictions" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="petRestrictions" className="block text-sm font-medium text-white">
               Pet Restrictions
             </label>
             <textarea
