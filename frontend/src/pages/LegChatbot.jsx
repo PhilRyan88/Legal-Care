@@ -1,40 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 import { FaPaperPlane, FaTrash, FaRobot, FaUser, FaSpinner } from "react-icons/fa";
 
-const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY || "");
-
-const sendToGemini = async (message, history) => {
+// 🔹 New helper: call your backend AI endpoint instead of Gemini directly
+const sendToBackend = async (message) => {
   try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction:
-        "You are pretending to be a legal advisor. You will provide answers to queries based on the ruleset used in India. Give clear steps on how the user can proceed in that situation. Refer to yourself as legal advisor. Only provide the legal side of the queries.",
-      generationConfig: {
-        temperature: 1,
-        topP: 0.95,
-        topK: 40,
-        maxOutputTokens: 8192,
-      },
+    const response = await axios.post("http://localhost:5000/api/vertex", {
+      message,
     });
-
-    const formattedHistory = history.map(msg => ({
-      role: msg.role === "user" ? "user" : "model",
-      parts: [{ text: msg.content }]
-    }));
-
-    const chat = model.startChat({
-      history: formattedHistory,
-      generationConfig: { temperature: 0.9 },
-    });
-
-    const result = await chat.sendMessage(message);
-    return result.response.text();
+    // backend returns: { content: "..." }
+    return response.data.content;
   } catch (error) {
-    console.error("Gemini API Error:", error.message);
-    throw new Error("Failed to get response from Gemini API");
+    console.error(
+      "Backend AI Error:",
+      error.response?.data || error.message
+    );
+    throw new Error("Failed to get response from legal advisor");
   }
 };
 
@@ -52,12 +34,18 @@ const LegChatbot = () => {
 
   const saveMessagesToBackend = async (updatedMessages) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/conversations/${userId}`, {
-        messages: updatedMessages,
-      });
+      const response = await axios.post(
+        `http://localhost:5000/api/conversations/${userId}`,
+        {
+          messages: updatedMessages,
+        }
+      );
       console.log("Messages saved:", response.data);
     } catch (error) {
-      console.error("Failed to save messages:", error.response?.data || error.message);
+      console.error(
+        "Failed to save messages:",
+        error.response?.data || error.message
+      );
       setError("Failed to save conversation");
     }
   };
@@ -65,12 +53,17 @@ const LegChatbot = () => {
   const clearChat = async () => {
     setIsLoading(true);
     try {
-      await axios.post(`http://localhost:5000/api/conversations/${userId}/clear`);
+      await axios.post(
+        `http://localhost:5000/api/conversations/${userId}/clear`
+      );
       setMessages([]);
       setError(null);
       console.log("Chat cleared successfully");
     } catch (error) {
-      console.error("Error clearing chat:", error.response?.data || error.message);
+      console.error(
+        "Error clearing chat:",
+        error.response?.data || error.message
+      );
       setError("Failed to clear chat");
     }
     setIsLoading(false);
@@ -79,13 +72,20 @@ const LegChatbot = () => {
   const getUserChat = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5000/api/conversations/${userId}`);
+      const response = await axios.get(
+        `http://localhost:5000/api/conversations/${userId}`
+      );
       console.log("Fetched messages:", response.data);
-      const fetchedMessages = Array.isArray(response.data) ? response.data : [];
+      const fetchedMessages = Array.isArray(response.data)
+        ? response.data
+        : [];
       setMessages(fetchedMessages);
       setError(null);
     } catch (error) {
-      console.error("Error fetching chat:", error.response?.data || error.message);
+      console.error(
+        "Error fetching chat:",
+        error.response?.data || error.message
+      );
       setError("Failed to load previous messages");
       setMessages([]);
     }
@@ -104,37 +104,42 @@ const LegChatbot = () => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
-    const userMessage = { 
-      role: "user", 
-      content: inputMessage.trim(), 
-      timestamp: new Date().toISOString() 
+    const userMessage = {
+      role: "user",
+      content: inputMessage.trim(),
+      timestamp: new Date().toISOString(),
     };
-    
+
     setInputMessage("");
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await sendToGemini(userMessage.content, messages);
-      const assistantMessage = { 
-        role: "assistant", 
-        content: response, 
-        timestamp: new Date().toISOString() 
+      // 🔹 Call backend AI instead of sendToGemini
+      const response = await sendToBackend(userMessage.content);
+
+      const assistantMessage = {
+        role: "assistant",
+        content: response,
+        timestamp: new Date().toISOString(),
       };
-      
-      setMessages(prev => {
+
+      setMessages((prev) => {
         const updatedMessages = [...prev, assistantMessage];
         saveMessagesToBackend(updatedMessages);
         return updatedMessages;
       });
     } catch (error) {
       console.error("Send message error:", error);
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        content: "Error: Could not get a response. Please try again.",
-        timestamp: new Date().toISOString()
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Error: Could not get a response. Please try again.",
+          timestamp: new Date().toISOString(),
+        },
+      ]);
       setError("Failed to get response from legal advisor");
     }
     setIsLoading(false);
@@ -148,7 +153,9 @@ const LegChatbot = () => {
           <div className="inline-block mb-3">
             <div className="flex items-center justify-center space-x-2 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-full px-6 py-2">
               <FaRobot className="text-emerald-400" />
-              <span className="text-emerald-400 text-sm font-semibold">LEGAL CHATBOT</span>
+              <span className="text-emerald-400 text-sm font-semibold">
+                LEGAL CHATBOT
+              </span>
             </div>
           </div>
           <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-100 to-teal-200 mb-2">
@@ -176,9 +183,12 @@ const LegChatbot = () => {
                   <FaRobot className="text-5xl text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Start a Conversation</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    Start a Conversation
+                  </h3>
                   <p className="text-slate-400 max-w-md">
-                    Ask me anything about Indian law, legal procedures, or get advice on legal matters
+                    Ask me anything about Indian law, legal procedures, or get
+                    advice on legal matters
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl">
@@ -186,7 +196,7 @@ const LegChatbot = () => {
                     "What are tenant rights in India?",
                     "How to file a consumer complaint?",
                     "What is the process for divorce?",
-                    "How to register a company?"
+                    "How to register a company?",
                   ].map((suggestion, idx) => (
                     <button
                       key={idx}
@@ -204,15 +214,19 @@ const LegChatbot = () => {
               <div
                 key={index}
                 className={`flex items-start space-x-4 ${
-                  message.role === "user" ? "flex-row-reverse space-x-reverse" : ""
+                  message.role === "user"
+                    ? "flex-row-reverse space-x-reverse"
+                    : ""
                 }`}
               >
                 {/* Avatar */}
-                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                  message.role === "user"
-                    ? "bg-gradient-to-br from-blue-500 to-indigo-600"
-                    : "bg-gradient-to-br from-emerald-500 to-teal-600"
-                }`}>
+                <div
+                  className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                    message.role === "user"
+                      ? "bg-gradient-to-br from-blue-500 to-indigo-600"
+                      : "bg-gradient-to-br from-emerald-500 to-teal-600"
+                  }`}
+                >
                   {message.role === "user" ? (
                     <FaUser className="text-white text-lg" />
                   ) : (
@@ -221,34 +235,92 @@ const LegChatbot = () => {
                 </div>
 
                 {/* Message Bubble */}
-                <div className={`flex-1 ${message.role === "user" ? "flex justify-end" : ""}`}>
-                  <div className={`max-w-3xl ${message.role === "user" ? "text-right" : ""}`}>
+                <div
+                  className={`flex-1 ${
+                    message.role === "user" ? "flex justify-end" : ""
+                  }`}
+                >
+                  <div
+                    className={`max-w-3xl ${
+                      message.role === "user" ? "text-right" : ""
+                    }`}
+                  >
                     <div className="flex items-center space-x-2 mb-2">
-                      <span className={`text-sm font-semibold ${
-                        message.role === "user" ? "text-blue-400" : "text-emerald-400"
-                      }`}>
+                      <span
+                        className={`text-sm font-semibold ${
+                          message.role === "user"
+                            ? "text-blue-400"
+                            : "text-emerald-400"
+                        }`}
+                      >
                         {message.role === "user" ? "You" : "Legal Advisor"}
                       </span>
                     </div>
-                    <div className={`rounded-2xl p-4 ${
-                      message.role === "user"
-                        ? "bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/30"
-                        : "bg-slate-800/50 border border-slate-700/50"
-                    }`}>
-                      <div className={`prose prose-invert prose-slate max-w-none ${
-                        message.role === "user" ? "text-slate-200" : ""
-                      }`}>
+                    <div
+                      className={`rounded-2xl p-4 ${
+                        message.role === "user"
+                          ? "bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/30"
+                          : "bg-slate-800/50 border border-slate-700/50"
+                      }`}
+                    >
+                      <div
+                        className={`prose prose-invert prose-slate max-w-none ${
+                          message.role === "user" ? "text-slate-200" : ""
+                        }`}
+                      >
                         <ReactMarkdown
                           components={{
-                            h1: ({node, ...props}) => <h1 className="text-white text-xl font-bold mb-3" {...props} />,
-                            h2: ({node, ...props}) => <h2 className="text-emerald-200 text-lg font-bold mb-2 mt-4" {...props} />,
-                            h3: ({node, ...props}) => <h3 className="text-emerald-300 text-base font-semibold mb-2 mt-3" {...props} />,
-                            p: ({node, ...props}) => <p className="text-slate-300 mb-2 leading-relaxed text-sm" {...props} />,
-                            ul: ({node, ...props}) => <ul className="text-slate-300 space-y-1 mb-3 text-sm" {...props} />,
-                            ol: ({node, ...props}) => <ol className="text-slate-300 space-y-1 mb-3 text-sm" {...props} />,
-                            li: ({node, ...props}) => <li className="ml-4" {...props} />,
-                            strong: ({node, ...props}) => <strong className="text-white font-semibold" {...props} />,
-                            code: ({node, ...props}) => <code className="bg-slate-900/50 px-1 py-0.5 rounded text-emerald-400" {...props} />,
+                            h1: ({ node, ...props }) => (
+                              <h1
+                                className="text-white text-xl font-bold mb-3"
+                                {...props}
+                              />
+                            ),
+                            h2: ({ node, ...props }) => (
+                              <h2
+                                className="text-emerald-200 text-lg font-bold mb-2 mt-4"
+                                {...props}
+                              />
+                            ),
+                            h3: ({ node, ...props }) => (
+                              <h3
+                                className="text-emerald-300 text-base font-semibold mb-2 mt-3"
+                                {...props}
+                              />
+                            ),
+                            p: ({ node, ...props }) => (
+                              <p
+                                className="text-slate-300 mb-2 leading-relaxed text-sm"
+                                {...props}
+                              />
+                            ),
+                            ul: ({ node, ...props }) => (
+                              <ul
+                                className="text-slate-300 space-y-1 mb-3 text-sm"
+                                {...props}
+                              />
+                            ),
+                            ol: ({ node, ...props }) => (
+                              <ol
+                                className="text-slate-300 space-y-1 mb-3 text-sm"
+                                {...props}
+                              />
+                            ),
+                            li: ({ node, ...props }) => (
+                              <li className="ml-4" {...props} />
+                            ),
+                            strong: ({ node, ...props }) => (
+                              <strong
+                                className="text-white font-semibold"
+                                {...props}
+                              />
+                            ),
+                            code: ({ node, ...props }) => (
+                              <code
+                                className="bg-slate-900/50 px-1 py-0.5 rounded text-emerald-400"
+                                {...props}
+                              />
+                            ),
                           }}
                         >
                           {message.content}
@@ -268,12 +340,16 @@ const LegChatbot = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-sm font-semibold text-emerald-400">Legal Advisor</span>
+                    <span className="text-sm font-semibold text-emerald-400">
+                      Legal Advisor
+                    </span>
                   </div>
                   <div className="rounded-2xl p-4 bg-slate-800/50 border border-slate-700/50 max-w-xs">
                     <div className="flex items-center space-x-3">
                       <FaSpinner className="animate-spin text-emerald-400" />
-                      <span className="text-slate-400 text-sm">Thinking...</span>
+                      <span className="text-slate-400 text-sm">
+                        Thinking...
+                      </span>
                     </div>
                   </div>
                 </div>

@@ -1,66 +1,59 @@
+// routes/chat2.js
 const express = require('express');
-const { VertexAI } = require('@google-cloud/vertexai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const app = express();
-app.use(express.json());
+const router = express.Router();
 
-// Initialize Vertex AI
-const vertex_ai = new VertexAI({ 
-  project: '101965346847', 
-  location: 'us-central1' 
-});
-const model = 'projects/101965346847/locations/us-central1/endpoints/6271267978671554560';
+// ✅ Use API key from backend .env
+const apiKey = process.env.GEMINI_API_KEY;
 
-const generativeModel = vertex_ai.preview.getGenerativeModel({
-  model: model,
+if (!apiKey) {
+  console.error('❌ GEMINI_API_KEY is not set in backend .env');
+}
+
+const genAI = new GoogleGenerativeAI(apiKey);
+
+// ✅ Use a currently available model (1.5 is giving 404 now)
+const model = genAI.getGenerativeModel({
+  // model: 'gemini-1.5-flash',          // ⛔ OLD – gives 404
+  // model: 'gemini-2.0-flash',          // ✅ option 1
+  model: 'gemini-2.5-flash',             // ✅ option 2 (newer, often recommended)
+  systemInstruction:
+    'You are pretending to be a legal advisor. You will provide answers to queries based on the ruleset used in India. Do not answer vaguely. Give clear steps on how the user can proceed in that situation. Refer to yourself as legal advisor. Only provide the legal side of the queries.',
   generationConfig: {
     maxOutputTokens: 8192,
     temperature: 1,
     topP: 0.95,
+    topK: 40,
   },
-  safetySettings: [
-    {
-      category: 'HARM_CATEGORY_HATE_SPEECH',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-    },
-    {
-      category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-    },
-    {
-      category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-    },
-    {
-      category: 'HARM_CATEGORY_HARASSMENT',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-    }
-  ],
-  // Adding system instruction similar to previous Gemini implementation
-  systemInstruction: "You are pretending to be a legal advisor. You will provide answers to queries based on the ruleset used in India. Do not answer vaguely. Give clear steps on how the user can proceed in that situation. Refer to yourself as legal advisor. Only provide the legal side of the queries."
 });
 
-const chat = generativeModel.startChat({});
-
-app.post('/api/vertex', async (req, res) => {
+// POST /api/vertex  → generate legal answer
+router.post('/vertex', async (req, res) => {
   try {
     const { message } = req.body;
-    const streamResult = await chat.sendMessageStream(message);
-    const response = await streamResult.response;
-    const content = response.candidates[0].content.parts[0].text;
-    res.json({ content });
+
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const result = await model.generateContent(message);
+    const response = result.response;
+    const text = response.text();
+
+    res.json({ content: text });
   } catch (error) {
-    console.error("Vertex AI Error:", error);
-    res.status(500).json({ error: "Failed to get response from Vertex AI" });
+    console.error('Gemini backend error:', error);
+    res.status(500).json({
+      error: 'Failed to get response from Gemini',
+      details: error.message,
+    });
   }
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
+// Health check
+router.get('/vertex/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+module.exports = router;
