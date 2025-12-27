@@ -11,10 +11,9 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 
-// Initialize the Google Generative AI
+
 const genAI = new GoogleGenerativeAI(`${process.env.REACT_APP_GEMINI_API_KEY}`);
 
-// Initialize PDF.js
 const initPDFJS = async () => {
   const pdfjs = await import("pdfjs-dist/webpack");
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;

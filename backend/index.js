@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-dotenv.config(); // ✅ load env FIRST
+dotenv.config(); 
 
 const authRoutes = require("./routes/auth");
 const chatRoutes = require("./routes/chat.js");
-const chat2Routes = require("./routes/chat2.js"); // ✅ now env is ready when this runs
+const chat2Routes = require("./routes/chat2.js"); // now env is ready when this runs
 
 const app = express();
 

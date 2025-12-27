@@ -191,3 +191,64 @@
 # print("the list is : ",l)
 
 #    # ?  l[10,20,30,40,50]
+
+
+# L= ["q","w","e","r","t","y"]
+# stop = len(L)
+# for i in range (stop):
+#     print("index no is :",i," : ",L[i] )
+
+
+# a= [1,2,3]
+# b= a.copy()
+# print(b)
+
+# a=[1,2,3,5] # 
+# c=["hello"]
+# a.insert(1,c[0])
+# print(a)
+
+#? the output we need is [1, 'hello', 2, 3, 5] , we have a=[1,2,3,5], c=["hello"]
+#? without using index number i neeed to insert the element at the last positon using insert()
+
+# a=[1,2,3,4]
+# a.insert(len(a),5)
+# print(a)
+
+# a=[1,2,3,4]
+# a.pop()
+# print(a)
+
+# b=["hi",1,2,"hello"]
+
+# for i in range(1,3,1):
+#     if(i==2):
+#         i=0
+#         continue    #
+#     b.pop(i) 
+
+# print(b)
+
+# a= ["hi","hello",1,2,"hello"]  # remove 2 hellos and 1 hi from the list using loop
+
+# i=0
+
+# while i <=2:
+    
+#     if(i!=2):  
+#      a.remove("hello") 
+
+#     if(i==2): 
+#        a.remove("hi")
+
+#     i=i+1
+
+# print(a)
+
+
+a=[1,"hi"]
+a.clear()
+print(a)
+
+
+
