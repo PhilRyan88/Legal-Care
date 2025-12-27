@@ -2,12 +2,18 @@ import React, { useState, useEffect } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import mammoth from "mammoth";
 import ReactMarkdown from "react-markdown";
-import { FaFileUpload, FaFilePdf, FaFileWord, FaFileAlt, FaCheckCircle, FaSpinner } from "react-icons/fa";
+import {
+  FaFileUpload,
+  FaFilePdf,
+  FaFileWord,
+  FaFileAlt,
+  FaCheckCircle,
+  FaSpinner,
+} from "react-icons/fa";
 
-// Initialize the Google Generative AI
+
 const genAI = new GoogleGenerativeAI(`${process.env.REACT_APP_GEMINI_API_KEY}`);
 
-// Initialize PDF.js
 const initPDFJS = async () => {
   const pdfjs = await import("pdfjs-dist/webpack");
   pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -34,7 +40,10 @@ const DocAnalyser = () => {
     }
 
     try {
-      const pdf = await pdfjs.getDocument(arrayBuffer).promise;
+      // Convert ArrayBuffer to Uint8Array for pdf.js
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      const pdf = await pdfjs.getDocument({ data: uint8Array }).promise;
       let fullText = "";
 
       for (let i = 1; i <= pdf.numPages; i++) {
@@ -44,6 +53,7 @@ const DocAnalyser = () => {
         fullText += pageText + "\n";
       }
 
+      console.log("Extracted PDF text length:", fullText.length);
       return fullText;
     } catch (error) {
       console.error("PDF extraction error:", error);
@@ -100,7 +110,10 @@ const DocAnalyser = () => {
       }
 
       if (!text || text.trim().length === 0) {
-        throw new Error("No text content could be extracted from the file");
+        console.warn(
+          "No text extracted from file – using fallback description."
+        );
+        return "No readable text could be extracted from this document. It may be a scanned or image-based legal document. Please give general guidance a legal advisor might offer when only the existence of such a document is known, but not its exact text.";
       }
 
       return text;
@@ -136,7 +149,9 @@ const DocAnalyser = () => {
       setExtractedText(fileContent);
 
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
+        model: "gemini-2.5-flash",
+        systemInstruction:
+          "You are pretending to be a legal advisor. You will provide answers based on Indian law. Do not answer vaguely. Give clear steps on how the user can proceed. Refer to yourself as legal advisor. Only provide the legal side of the queries.",
         generationConfig: {
           temperature: 0.7,
           topP: 0.8,
@@ -145,24 +160,20 @@ const DocAnalyser = () => {
         },
       });
 
-      const chat = model.startChat({
-        history: [],
-        generationConfig: { temperature: 0.7 },
-      });
-
       const prompt = `As a legal advisor, please analyze the following document content and provide:
-      1. A summary of the key points
-      2. Any legal implications under Indian law
-      3. Recommended actions or next steps
+1. A summary of the key points
+2. Any legal implications under Indian law
+3. Recommended actions or next steps
 
-      Make the content easy to understand for a person with little or no legal knowledge.
-      
-      Document content:
-      ${fileContent}`;
+Make the content easy to understand for a person with little or no legal knowledge.
 
-      const result = await chat.sendMessage(prompt);
-      console.log(result.response.text());
-      setAnalysisResult(result.response.text());
+Document content:
+${fileContent}`;
+
+      const result = await model.generateContent(prompt);
+      const text = result.response.text();
+      console.log(text);
+      setAnalysisResult(text);
     } catch (error) {
       console.error("Error analyzing document:", error);
       setError(`Failed to analyze the document: ${error.message}`);
@@ -173,7 +184,7 @@ const DocAnalyser = () => {
 
   const getFileIcon = () => {
     if (!file) return <FaFileUpload className="text-4xl" />;
-    
+
     switch (file.type) {
       case "application/pdf":
         return <FaFilePdf className="text-4xl text-red-400" />;
@@ -194,7 +205,9 @@ const DocAnalyser = () => {
           <div className="inline-block mb-4">
             <div className="flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-full px-6 py-2">
               <FaFileAlt className="text-purple-400" />
-              <span className="text-purple-400 text-sm font-semibold">DOCUMENT ANALYSER</span>
+              <span className="text-purple-400 text-sm font-semibold">
+                DOCUMENT ANALYSER
+              </span>
             </div>
           </div>
           <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-pink-200 mb-4">
@@ -213,7 +226,7 @@ const DocAnalyser = () => {
               <label className="block text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-200 mb-4">
                 Upload Document
               </label>
-              
+
               <div className="relative group">
                 <input
                   type="file"
@@ -223,25 +236,31 @@ const DocAnalyser = () => {
                   onChange={handleFileChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
-                <div className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
-                  file 
-                    ? 'border-green-500/50 bg-green-500/5' 
-                    : 'border-slate-700/50 bg-slate-800/30 group-hover:border-purple-500/50 group-hover:bg-purple-500/5'
-                }`}>
+                <div
+                  className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
+                    file
+                      ? "border-green-500/50 bg-green-500/5"
+                      : "border-slate-700/50 bg-slate-800/30 group-hover:border-purple-500/50 group-hover:bg-purple-500/5"
+                  }`}
+                >
                   <div className="flex flex-col items-center space-y-4">
                     {getFileIcon()}
                     <div>
                       <p className="text-slate-300 text-lg font-medium mb-1">
-                        {file ? file.name : 'Click to upload or drag and drop'}
+                        {file ? file.name : "Click to upload or drag and drop"}
                       </p>
                       <p className="text-slate-500 text-sm">
-                        {file ? `${(file.size / 1024).toFixed(2)} KB` : 'PDF, DOCX, or TXT (Max 10MB)'}
+                        {file
+                          ? `${(file.size / 1024).toFixed(2)} KB`
+                          : "PDF, DOCX, or TXT (Max 10MB)"}
                       </p>
                     </div>
                     {file && (
                       <div className="flex items-center space-x-2 text-green-400">
                         <FaCheckCircle />
-                        <span className="text-sm font-medium">File uploaded successfully</span>
+                        <span className="text-sm font-medium">
+                          File uploaded successfully
+                        </span>
                       </div>
                     )}
                   </div>
@@ -289,7 +308,9 @@ const DocAnalyser = () => {
                 </h3>
                 <div className="flex items-center space-x-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-full px-4 py-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                  <span className="text-blue-400 text-xs font-semibold">UPLOADED</span>
+                  <span className="text-blue-400 text-xs font-semibold">
+                    UPLOADED
+                  </span>
                 </div>
               </div>
               <div className="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50">
@@ -310,7 +331,9 @@ const DocAnalyser = () => {
                 {analysisResult && (
                   <div className="flex items-center space-x-2 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-full px-4 py-2">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span className="text-green-400 text-xs font-semibold">COMPLETE</span>
+                    <span className="text-green-400 text-xs font-semibold">
+                      COMPLETE
+                    </span>
                   </div>
                 )}
               </div>
@@ -325,16 +348,53 @@ const DocAnalyser = () => {
                   </div>
                 ) : analysisResult ? (
                   <div className="prose prose-invert prose-slate max-w-none">
-                    <ReactMarkdown 
+                    <ReactMarkdown
                       components={{
-                        h1: ({node, ...props}) => <h1 className="text-white text-2xl font-bold mb-4" {...props} />,
-                        h2: ({node, ...props}) => <h2 className="text-purple-200 text-xl font-bold mb-3 mt-6" {...props} />,
-                        h3: ({node, ...props}) => <h3 className="text-purple-300 text-lg font-semibold mb-2 mt-4" {...props} />,
-                        p: ({node, ...props}) => <p className="text-slate-300 mb-3 leading-relaxed" {...props} />,
-                        ul: ({node, ...props}) => <ul className="text-slate-300 space-y-2 mb-4" {...props} />,
-                        ol: ({node, ...props}) => <ol className="text-slate-300 space-y-2 mb-4" {...props} />,
-                        li: ({node, ...props}) => <li className="ml-4" {...props} />,
-                        strong: ({node, ...props}) => <strong className="text-white font-semibold" {...props} />,
+                        h1: ({ node, ...props }) => (
+                          <h1
+                            className="text-white text-2xl font-bold mb-4"
+                            {...props}
+                          />
+                        ),
+                        h2: ({ node, ...props }) => (
+                          <h2
+                            className="text-purple-200 text-xl font-bold mb-3 mt-6"
+                            {...props}
+                          />
+                        ),
+                        h3: ({ node, ...props }) => (
+                          <h3
+                            className="text-purple-300 text-lg font-semibold mb-2 mt-4"
+                            {...props}
+                          />
+                        ),
+                        p: ({ node, ...props }) => (
+                          <p
+                            className="text-slate-300 mb-3 leading-relaxed"
+                            {...props}
+                          />
+                        ),
+                        ul: ({ node, ...props }) => (
+                          <ul
+                            className="text-slate-300 space-y-2 mb-4"
+                            {...props}
+                          />
+                        ),
+                        ol: ({ node, ...props }) => (
+                          <ol
+                            className="text-slate-300 space-y-2 mb-4"
+                            {...props}
+                          />
+                        ),
+                        li: ({ node, ...props }) => (
+                          <li className="ml-4" {...props} />
+                        ),
+                        strong: ({ node, ...props }) => (
+                          <strong
+                            className="text-white font-semibold"
+                            {...props}
+                          />
+                        ),
                       }}
                     >
                       {analysisResult}
@@ -343,7 +403,9 @@ const DocAnalyser = () => {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                     <div className="text-6xl text-slate-700">📄</div>
-                    <p className="text-slate-400">Upload and analyze a document to see results here</p>
+                    <p className="text-slate-400">
+                      Upload and analyze a document to see results here
+                    </p>
                   </div>
                 )}
               </div>
