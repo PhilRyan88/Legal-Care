@@ -1,10 +1,9 @@
-// routes/chat2.js
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const router = express.Router();
 
-// ✅ Use API key from backend .env
+
 const apiKey = process.env.GEMINI_API_KEY;
 
 if (!apiKey) {
@@ -13,11 +12,9 @@ if (!apiKey) {
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// ✅ Use a currently available model (1.5 is giving 404 now)
 const model = genAI.getGenerativeModel({
-  // model: 'gemini-1.5-flash',          // ⛔ OLD – gives 404
-  // model: 'gemini-2.0-flash',          // ✅ option 1
-  model: 'gemini-2.5-flash',             // ✅ option 2 (newer, often recommended)
+
+  model: 'gemini-2.5-flash',            
   systemInstruction:
     'You are pretending to be a legal advisor. You will provide answers to queries based on the ruleset used in India. Do not answer vaguely. Give clear steps on how the user can proceed in that situation. Refer to yourself as legal advisor. Only provide the legal side of the queries.',
   generationConfig: {
@@ -28,7 +25,7 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-// POST /api/vertex  → generate legal answer
+
 router.post('/vertex', async (req, res) => {
   try {
     const { message } = req.body;
