@@ -148,6 +148,27 @@ const DocAnalyser = () => {
       const fileContent = await extractFileContent(file);
       setExtractedText(fileContent);
 
+      const response = await fetch("http://localhost:5000/api/ml/analyze_document", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ documentText: fileContent }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get analysis from the server.");
+      }
+
+      const mlResult = await response.json();
+      
+      if (!mlResult.isLegal) {
+        setAnalysisResult(`**Notice**: We can't help with this document as it is not related to law or does not contain sufficient legal context.`);
+        setLoading(false);
+        return;
+      }
+      
+      // Document is legal, fetch brief description via Gemini
       const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         systemInstruction:
@@ -161,19 +182,22 @@ const DocAnalyser = () => {
       });
 
       const prompt = `As a legal advisor, please analyze the following document content and provide:
-1. A summary of the key points
-2. Any legal implications under Indian law
-3. Recommended actions or next steps
+1. A brief summary of what the document is about
+2. A summary of the key points
+3. Any legal implications under Indian law
+4. Recommended actions or next steps
 
 Make the content easy to understand for a person with little or no legal knowledge.
 
 Document content:
 ${fileContent}`;
 
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
-      console.log(text);
-      setAnalysisResult(text);
+      const geminiResult = await model.generateContent(prompt);
+      const geminiText = geminiResult.response.text();
+      
+      const formattedResult = `### ML Model Analysis\n\n**Category:** ${mlResult.category} | **Severity Level:** ${mlResult.severity}\n\n---\n\n### AI Legal Advisor Summary\n\n${geminiText}`;
+      
+      setAnalysisResult(formattedResult);
     } catch (error) {
       console.error("Error analyzing document:", error);
       setError(`Failed to analyze the document: ${error.message}`);
